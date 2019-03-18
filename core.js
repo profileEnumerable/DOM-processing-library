@@ -27,25 +27,31 @@ const $ = function $(selector, context = document) {
         },
 
         fadeIn(duration) {
+            changeOpacity(duration, true, elements);
+            return this;
+        },
 
-            var start = performance.now(); //save the start of execution
-
-            window.requestAnimationFrame(function continueShow(now) {
-
-                var process = now - start; //how much time has passed
-
-                if (process < duration) {
-                    elements.forEach(elem => {
-                        elem.style.opacity = process / duration //divide for get the range[0,1]
-                    })
-
-                    window.requestAnimationFrame(continueShow);
-                }
-            })
+        fadeOut(duration) {
+            changeOpacity(duration, false, elements);
             return this;
         }
     }
 }
 
+function changeOpacity(duration, isAscending, elements) {
+    var start = performance.now(); //save the start of execution
 
-$('.block').fadeIn(2000);
+    window.requestAnimationFrame(function continueShow(now) {
+
+        var process = now - start; //how much time has passed
+
+        if (process <= duration) {
+            elements.forEach(elem => {
+                elem.style.opacity = isAscending ? process / duration :
+                    (duration - process) / duration //divide for get the range[0,1]
+            })
+
+            window.requestAnimationFrame(continueShow);
+        }
+    })
+}
